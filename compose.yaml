@@ -99,8 +99,8 @@ services:
       MYSQL_PASSWORD: ${GIT_SERVER_MYSQL_PASSWORD:?}
     healthcheck:
       test: [
-        "CMD", "mysqladmin", "ping", "-u", "root", "-password=${GIT_SERVER_MYSQL_PASSWORD:?}",
-        "-S", "${GIT_SERVER_MYSQL_SCKT:?}"
+        "CMD", "mysqladmin", "ping", "-S", "${GIT_SERVER_MYSQL_SCKT:?}",
+        "-u", "root", "-password=${GIT_SERVER_MYSQL_PASSWORD:?}"
       ]
       interval: 30s
       timeout: 5s

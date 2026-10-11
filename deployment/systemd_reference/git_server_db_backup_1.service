@@ -1,0 +1,8 @@
+[Unit]
+Description=periodic first backup of git server's database
+
+[Service]
+Type=oneshot
+User=<REPLACE: preferably non-root user>
+WorkingDirectory=<REPLACE: absolute path to `backup_scripts/` directory>
+ExecStart=/usr/bin/env bash db_backup.sh <REPLACE: backup destination path> 1

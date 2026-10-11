@@ -1,9 +1,9 @@
 # security
 *.env
-.*.env
 # SYNC: naming convention!
 *_privkey
 mysql/mysql_data_dir/
+deployment/backup_scripts/backup*.sql
 
 # other variable things
 data/custom/conf/*
