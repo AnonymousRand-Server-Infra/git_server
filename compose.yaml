@@ -1,5 +1,5 @@
 include:
-  - ${PATH_TO_ROOT_DOCKER_PROJ:?}/shared_sckts.yaml
+  - ${PATH_TO_ROOT_DOCKER_PROJ:?}/${PATH_FROM_ROOT_TO_UTILS:?}/shared_sckts.yaml
   - ${PATH_TO_ROOT_DOCKER_PROJ:?}/${PATH_FROM_ROOT_TO_NGINX:?}/compose.yaml
   - ${PATH_TO_ROOT_DOCKER_PROJ:?}/${PATH_FROM_ROOT_TO_IOCAINE:?}/compose.yaml
   - ./deployment/anubis/compose.yaml
@@ -8,45 +8,63 @@ services:
   git_server:
     container_name: git_server
     extends:
-      file: ${PATH_TO_ROOT_DOCKER_PROJ:?}/shared_sckts.yaml
+      file: ${PATH_TO_ROOT_DOCKER_PROJ:?}/${PATH_FROM_ROOT_TO_UTILS:?}/shared_sckts.yaml
       service: shared_sckts_user
     profiles:
       - ${DOCKER_DEFAULT_PROFILE:?}
     image: codeberg.org/forgejo/forgejo:15
     restart: unless-stopped
-    user: ${DOCKER_NONROOT_USER}
-    # SYNC: config path inside container
-    command: --config /data/app.ini
+    # NOTE: we can't seem to set `user:` since forgejo must use its own internal user initially
+    # to initialize some stuff in `/etc/` etc.
     # SYNC: make sure firewalls (e.g. `ufw`) don't block these ports!
     ports:
       # for forgejo's ssh server (ssh git urls); set bound port to >=1024 for nonroot container user
       - "2222:22"
     volumes:
-      # host-provided data
-      # SYNC: source path with host path
-      - type: bind
-        source: ./data/
+      # container-generated data (specifically, main app state)
+      # SYNC: paths in which the container produces data (currently should be default)
+      - type: volume
+        source: git_server_data
         target: /data/
+      # host-provided data
+      # SYNC: whether the config file is an `envsubst` template, and if so, its name/extension
+      - type: bind
+        source: ${GIT_SERVER_CONFIG_SRC_DIR:?}
+        target: ${GIT_SERVER_CONFIG_DEST_DIR:?}
+        # not `read_only` since `envsubst` needs to write to this, and we can't bind only the input
+        # `envsubst` file as `pre_start` runs in a separate container, so the output file is lost
       # the docs have this so
       - type: bind
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
+    env_file:
+      # for `envsubst`
+      - ./.env
     environment:
-      FORGEJO__server__PROTOCOL: http+unix
-      FORGEJO__server__HTTP_ADDR: ${GIT_SERVER_SCKT:?}
-      FORGEJO__server__SOCKET_PERMISSION: 660
-      FORGEJO__database__DB_TYPE: mysql
-      FORGEJO__database__HOST: ${GIT_SERVER_MYSQL_SCKT:?}
-      FORGEJO__database__NAME: ${GIT_SERVER_MYSQL_DB_NAME:?}
-      FORGEJO__database__USER: ${GIT_SERVER_MYSQL_USERNAME:?}
-      FORGEJO__database__PASSWD: ${GIT_SERVER_MYSQL_PASSWORD:?}
+      # after init, forgejo relies on this to set user/group (for its internal `git` user)
+      USER_UID: ${DOCKER_NONROOT_UID:?}
+      USER_GID: ${DOCKER_NGINX_GID:?}
+      FORGEJO_CUSTOM: ${FORGEJO_CUSTOM_DEST_DIR:?}
     healthcheck:
       test: ["CMD", "curl", "-I", "https://${SITE_DOMAIN:?}"]
       interval: 1m
       timeout: 5s
       retries: 3
       start_period: 30s
+    pre_start:
+      # use `envsubst` instead of passing some config options here as environment variables
+      # since also passing a config file seems to override the environment variables
+      # SYNC: paths inside container
+      - image: akubrinsky/envsubst
+        # note that `sh -c` is required for `envsubst` (probably because it deals with env vars?)
+        command: >
+          sh -c '
+            [ -f ${GIT_SERVER_CONFIG_DEST_FILE:?}.template ] \
+              && envsubst < ${GIT_SERVER_CONFIG_DEST_FILE:?}.template \
+              > ${GIT_SERVER_CONFIG_DEST_FILE:?}
+            chown ${DOCKER_NONROOT_USER:?} ${GIT_SERVER_CONFIG_DEST_FILE:?}
+          '
     depends_on:
       nginx:
         condition: service_healthy
@@ -60,14 +78,14 @@ services:
   git_server_mysql:
     container_name: git_server_mysql
     extends:
-      file: ${PATH_TO_ROOT_DOCKER_PROJ:?}/shared_sckts.yaml
+      file: ${PATH_TO_ROOT_DOCKER_PROJ:?}/${PATH_FROM_ROOT_TO_UTILS:?}/shared_sckts.yaml
       service: shared_sckts_user
     profiles:
       - ${DOCKER_DEFAULT_PROFILE:?}
     image: mysql:9.7
+    command: --skip-networking --socket=${GIT_SERVER_MYSQL_SCKT:?}
     restart: unless-stopped
     user: ${DOCKER_NONROOT_USER:?}
-    command: --skip-networking --socket=${GIT_SERVER_MYSQL_SCKT:?}
     volumes:
       # for persisting database
       # SYNC: source path with mysql data directory on host
@@ -87,5 +105,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      # make this like 30s if not bind mounting data directory!
       start_period: 10s
+
+volumes:
+  git_server_data:

@@ -5,6 +5,10 @@
 *_privkey
 mysql/mysql_data_dir/
 
+# other variable things
+data/custom/conf/*
+!data/custom/conf/app.ini.template
+
 # vim
 *.swp
 *.swo

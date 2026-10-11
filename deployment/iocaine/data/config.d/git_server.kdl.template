@@ -1,0 +1,7 @@
+declare-handler nam-shub-of-enki {
+    checks {
+        cookie-monster {
+            forgejo-hosts "${SITE_DOMAIN}"
+        }
+    }
+}

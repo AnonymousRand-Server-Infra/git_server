@@ -1,0 +1,37 @@
+APP_NAME = git@anonymousrand
+APP_SLOGAN =
+APP_DISPLAY_NAME_FORMAT = git@anonymousrand
+
+[server]
+DOMAIN = ${SITE_DOMAIN}
+ROOT_URL = https://${SITE_DOMAIN}/
+PROTOCOL = http+unix
+HTTP_ADDR = ${GIT_SERVER_SCKT}
+SOCKET_PERMISSION = 660
+
+[database]
+DB_TYPE = mysql
+HOST = ${GIT_SERVER_MYSQL_SCKT}
+NAME = ${GIT_SERVER_MYSQL_DB_NAME}
+USER = ${GIT_SERVER_MYSQL_USERNAME}
+PASSWD = ${GIT_SERVER_MYSQL_PASSWORD}
+
+[security]
+# this disables the installation page
+# (but requires manually setting `SECRET_KEY` and `INTERNAL_TOKEN`)
+INSTALL_LOCK = true
+SECRET_KEY = ${FORGEJO_SECRET_KEY}
+INTERNAL_TOKEN = ${FORGEJO_INTERNAL_TOKEN}
+
+[session]
+# must not conflict with other session cookie names on the same base domain, like personal site's!
+COOKIE_NAME = forgejo_session
+
+[service]
+# disable self-registration via the web ui; must be done by admins instead
+DISABLE_REGISTRATION = true
+
+[cache]
+# use the caching strategy for smaller instances
+ADAPTER = twoqueue
+HOST = {"size":1000, "recent_ratio":0.25, "ghost_ratio":0.5}

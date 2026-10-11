@@ -17,6 +17,9 @@ services:
       - type: volume
         source: git_server_anubis_var
         target: /var/anubis/
+    env_file:
+      # for `envsubst`
+      - ./.env
     environment:
       BIND_NETWORK: unix
       BIND: ${GIT_SERVER_ANUBIS_IN_SCKT:?}
