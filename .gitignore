@@ -1,0 +1,10 @@
+# security
+*.env
+.*.env
+# SYNC: naming convention!
+*_privkey
+mysql/mysql_data_dir/
+
+# vim
+*.swp
+*.swo

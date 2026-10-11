@@ -1,0 +1,91 @@
+include:
+  - ${PATH_TO_ROOT_DOCKER_PROJ:?}/shared_sckts.yaml
+  - ${PATH_TO_ROOT_DOCKER_PROJ:?}/${PATH_FROM_ROOT_TO_NGINX:?}/compose.yaml
+  - ${PATH_TO_ROOT_DOCKER_PROJ:?}/${PATH_FROM_ROOT_TO_IOCAINE:?}/compose.yaml
+  - ./deployment/anubis/compose.yaml
+
+services:
+  git_server:
+    container_name: git_server
+    extends:
+      file: ${PATH_TO_ROOT_DOCKER_PROJ:?}/shared_sckts.yaml
+      service: shared_sckts_user
+    profiles:
+      - ${DOCKER_DEFAULT_PROFILE:?}
+    image: codeberg.org/forgejo/forgejo:15
+    restart: unless-stopped
+    user: ${DOCKER_NONROOT_USER}
+    # SYNC: config path inside container
+    command: --config /data/app.ini
+    # SYNC: make sure firewalls (e.g. `ufw`) don't block these ports!
+    ports:
+      # for forgejo's ssh server (ssh git urls); set bound port to >=1024 for nonroot container user
+      - "2222:22"
+    volumes:
+      # host-provided data
+      # SYNC: source path with host path
+      - type: bind
+        source: ./data/
+        target: /data/
+      # the docs have this so
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+    environment:
+      FORGEJO__server__PROTOCOL: http+unix
+      FORGEJO__server__HTTP_ADDR: ${GIT_SERVER_SCKT:?}
+      FORGEJO__server__SOCKET_PERMISSION: 660
+      FORGEJO__database__DB_TYPE: mysql
+      FORGEJO__database__HOST: ${GIT_SERVER_MYSQL_SCKT:?}
+      FORGEJO__database__NAME: ${GIT_SERVER_MYSQL_DB_NAME:?}
+      FORGEJO__database__USER: ${GIT_SERVER_MYSQL_USERNAME:?}
+      FORGEJO__database__PASSWD: ${GIT_SERVER_MYSQL_PASSWORD:?}
+    healthcheck:
+      test: ["CMD", "curl", "-I", "https://${SITE_DOMAIN:?}"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      nginx:
+        condition: service_healthy
+      iocaine:
+        condition: service_started
+      git_server_anubis:
+        condition: service_healthy
+      git_server_mysql:
+        condition: service_healthy
+
+  git_server_mysql:
+    container_name: git_server_mysql
+    extends:
+      file: ${PATH_TO_ROOT_DOCKER_PROJ:?}/shared_sckts.yaml
+      service: shared_sckts_user
+    profiles:
+      - ${DOCKER_DEFAULT_PROFILE:?}
+    image: mysql:9.7
+    restart: unless-stopped
+    user: ${DOCKER_NONROOT_USER:?}
+    command: --skip-networking --socket=${GIT_SERVER_MYSQL_SCKT:?}
+    volumes:
+      # for persisting database
+      # SYNC: source path with mysql data directory on host
+      - type: bind
+        source: ./mysql/mysql_data_dir/
+        target: /var/lib/mysql/
+    environment:
+      MYSQL_DATABASE: ${GIT_SERVER_MYSQL_DB_NAME:?}
+      MYSQL_ROOT_PASSWORD: ${GIT_SERVER_MYSQL_ROOT_PASSWORD:?}
+      MYSQL_USER: ${GIT_SERVER_MYSQL_USERNAME:?}
+      MYSQL_PASSWORD: ${GIT_SERVER_MYSQL_PASSWORD:?}
+    healthcheck:
+      test: [
+        "CMD", "mysqladmin", "ping", "-u", "root", "-password=${GIT_SERVER_MYSQL_PASSWORD:?}",
+        "-S", "${GIT_SERVER_MYSQL_SCKT:?}"
+      ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # make this like 30s if not bind mounting data directory!
+      start_period: 10s
