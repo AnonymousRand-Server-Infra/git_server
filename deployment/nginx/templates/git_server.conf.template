@@ -1,0 +1,110 @@
+# route `git.anonymousrand.xyz:443` to my git server
+
+
+server {
+    listen 80;
+    server_name git.anonymousrand.xyz;
+
+    location / {
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_set_header X-Forwarded-Host $host;
+         proxy_set_header Host $host;
+         proxy_pass http://unix:${GIT_SERVER_SCKT};
+         proxy_redirect off;
+    }
+
+    # for certbot (bypasses anubis etc. and also ensures it works with nginx in a container)
+    include conf.d/snippets/acme_challs.func;
+}
+
+
+## first send requests through anubis
+#server {
+#    listen 443 ssl; # managed by Certbot
+#    listen [::]:443 ssl;
+#    server_name anonymousrand.xyz blog.anonymousrand.xyz;
+#
+#    access_log /var/log/nginx/personal_website_access.log;
+#    error_log /var/log/nginx/personal_website_error.log;
+#
+#    location / {
+#        include conf.d/snippets/general_forwarding_headers.func;
+#        # only set these on first proxying "hop"!
+#        include conf.d/snippets/inbound_edge_forwarding_headers.func;
+#
+#        set $anubis_in_loc http://unix:${GIT_SERVER_ANUBIS_IN_SCKT};
+#        include conf.d/snippets/anubis.func;
+#    }
+#
+#    ## Cloudflare authenticated origin pull
+#    #ssl_verify_client on;
+#    #ssl_client_certificate /etc/nginx/ssl/cloudflare.crt;
+#
+#    ssl_certificate /etc/letsencrypt/live/$ssl_server_name/fullchain.pem; # managed by Certbot
+#    ssl_certificate_key /etc/letsencrypt/live/$ssl_server_name/privkey.pem; # managed by Certbot
+#    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+#    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+#
+#    client_max_body_size 100M;
+#}
+#
+#
+## then send traffic that passed anubis through iocaine
+#server {
+#    listen unix:${GIT_SERVER_ANUBIS_OUT_SCKT};
+#    server_name anonymousrand.xyz blog.anonymousrand.xyz;
+#
+#    location / {
+#        include conf.d/snippets/general_forwarding_headers.func;
+#
+#        set $iocaine_upstream @root;
+#        include conf.d/snippets/iocaine.func;
+#    }
+#
+#    # finally send traffic that passed iocaine to the upstream
+#    location @root {
+#        include conf.d/snippets/general_forwarding_headers.func;
+#
+#        proxy_pass http://unix:${GIT_SERVER_SCKT};
+#        proxy_redirect off;
+#    }
+#
+#    client_max_body_size 100M;
+#}
+#
+#
+## redirect `www.anonymousrand.xyz:443` to `anonymousrand.xyz:443` so both www and non-www work
+#server {
+#    listen 443 ssl; # managed by Certbot
+#    listen [::]:443 ssl;
+#    server_name www.anonymousrand.xyz;
+#
+#    ## Cloudflare authenticated origin pull
+#    #ssl_verify_client on;
+#    #ssl_client_certificate /etc/nginx/ssl/cloudflare.crt;
+#
+#    ssl_certificate /etc/letsencrypt/live/$ssl_server_name/fullchain.pem; # managed by Certbot
+#    ssl_certificate_key /etc/letsencrypt/live/$ssl_server_name/privkey.pem; # managed by Certbot
+#    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+#    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+#
+#    return 301 https://anonymousrand.xyz$request_uri;
+#
+#    client_max_body_size 100M;
+#}
+#
+#
+## redirect http requests to https
+#server {
+#    listen 80;
+#    listen [::]:80;
+#    server_name anonymousrand.xyz www.anonymousrand.xyz blog.anonymousrand.xyz;
+#
+#    ## Cloudflare authenticated origin pull
+#    #ssl_verify_client on;
+#    #ssl_client_certificate /etc/nginx/ssl/cloudflare.crt;
+#
+#    client_max_body_size 100M;
+#
+#    return 301 https://$host$request_uri;
+#}
