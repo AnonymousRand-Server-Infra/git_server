@@ -19,18 +19,17 @@ services:
     # SYNC: make sure firewalls (e.g. `ufw`) don't block these ports!
     ports:
       # for forgejo's ssh server (ssh git urls); set bound port to >=1024 for nonroot container user
-      - "2222:22"
+      - "2222:${FORGEJO_SSH_PORT}"
     volumes:
       # container-generated data (specifically, main app state)
       # SYNC: paths in which the container produces data (currently should be default)
       - type: volume
         source: git_server_data
         target: /data/
-      # host-provided data
-      # SYNC: whether the config file is an `envsubst` template, and if so, its name/extension
+      # host-provided data; we must provide all of `custom/` to be able to chown all of it later
       - type: bind
-        source: ${GIT_SERVER_CONFIG_SRC_DIR:?}
-        target: ${GIT_SERVER_CONFIG_DEST_DIR:?}
+        source: ${FORGEJO_CUSTOM_SRC_DIR:?}
+        target: ${FORGEJO_CUSTOM_DEST_DIR:?}
         # not `read_only` since `envsubst` needs to write to this, and we can't bind only the input
         # `envsubst` file as `pre_start` runs in a separate container, so the output file is lost
       # the docs have this so
@@ -57,13 +56,17 @@ services:
       # since also passing a config file seems to override the environment variables
       # SYNC: paths inside container
       - image: akubrinsky/envsubst
+        user: ${DOCKER_ROOT_USER:?}
         # note that `sh -c` is required for `envsubst` (probably because it deals with env vars?)
         command: >
           sh -c '
             [ -f ${GIT_SERVER_CONFIG_DEST_FILE:?}.template ] \
               && envsubst < ${GIT_SERVER_CONFIG_DEST_FILE:?}.template \
               > ${GIT_SERVER_CONFIG_DEST_FILE:?}
-            chown ${DOCKER_NONROOT_USER:?} ${GIT_SERVER_CONFIG_DEST_FILE:?}
+            # we chown from the very topmost directory
+            chown -R ${DOCKER_NONROOT_USER:?} ${FORGEJO_CUSTOM_DEST_DIR:?}
+            # also remember to chown this volume!
+            chown -R ${DOCKER_NONROOT_USER:?} /data/
           '
     depends_on:
       nginx:

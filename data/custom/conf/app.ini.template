@@ -8,6 +8,11 @@ ROOT_URL = https://${SITE_DOMAIN}/
 PROTOCOL = http+unix
 HTTP_ADDR = ${GIT_SERVER_SCKT}
 SOCKET_PERMISSION = 660
+# use built-in ssh server instead of ssh on the host, since we are using docker
+START_SSH_SERVER = true
+SSH_LISTEN_PORT = ${FORGEJO_SSH_PORT}
+# hide the true port in the repo urls
+SSH_PORT = 22
 
 [database]
 DB_TYPE = mysql
@@ -30,6 +35,9 @@ COOKIE_NAME = forgejo_session
 [service]
 # disable self-registration via the web ui; must be done by admins instead
 DISABLE_REGISTRATION = true
+
+[oauth2]
+JWT_SECRET = ${FORGEJO_JWT_SECRET}
 
 [cache]
 # use the caching strategy for smaller instances
