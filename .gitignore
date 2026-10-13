@@ -6,9 +6,8 @@ mysql/mysql_data_dir/
 deployment/backup_scripts/backup*.sql
 
 # other variable things
-data/forgejo/conf/*
+data/**
 !data/forgejo/conf/app.ini.template
-data/forgejo_runner/*
 !data/forgejo_runner/config.yaml.template
 
 # vim
