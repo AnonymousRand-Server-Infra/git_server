@@ -141,9 +141,9 @@ services:
     profiles:
       - ${DOCKER_DEFAULT_PROFILE:?}
     image: data.forgejo.org/forgejo/runner:13
-    command: forgejo-runner --config ${FORGEJO_RUNNER_CONFIG_DEST_FILE:?} daemon
     restart: unless-stopped
     user: ${DOCKER_NONROOT_USER:?}
+    command: forgejo-runner --config ${FORGEJO_RUNNER_CONFIG_DEST_FILE:?} daemon
     volumes:
       # certs for encrypted communications with dind
       - type: volume
