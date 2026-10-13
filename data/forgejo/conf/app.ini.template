@@ -10,9 +10,7 @@ HTTP_ADDR = ${GIT_SERVER_SCKT}
 SOCKET_PERMISSION = 660
 # use built-in ssh server instead of ssh on the host, since we are using docker
 START_SSH_SERVER = true
-SSH_LISTEN_PORT = ${FORGEJO_SSH_PORT}
-# hide the true port in the repo urls
-SSH_PORT = 22
+SSH_PORT = ${FORGEJO_SSH_PORT}
 
 [database]
 DB_TYPE = mysql

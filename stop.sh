@@ -25,5 +25,7 @@ source "$path_to_utils/bash_utils.sh"
 errorless_docker_down git_server
 errorless_docker_down git_server_mysql
 errorless_docker_down git_server_anubis
+errorless_docker_down forgejo_runner
+errorless_docker_down forgejo_runner_dind
 errorless_docker_down nginx
 errorless_docker_down iocaine
