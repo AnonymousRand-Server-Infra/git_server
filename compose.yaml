@@ -25,7 +25,7 @@ services:
       # SYNC: paths in which the container produces data (currently should be default)
       - type: volume
         source: git_server_data
-        target: /data/
+        target: ${GIT_SERVER_DATA_DEST_DIR:?}
       # host-provided data; we must provide all of `custom/` to be able to chown all of it later
       - type: bind
         source: ${FORGEJO_CUSTOM_SRC_DIR:?}
@@ -46,8 +46,8 @@ services:
       USER_GID: ${DOCKER_NGINX_GID:?}
       FORGEJO_CUSTOM: ${FORGEJO_CUSTOM_DEST_DIR:?}
     healthcheck:
-      test: ["CMD", "curl", "-I", "https://${SITE_DOMAIN:?}"]
-      interval: 1m
+      test: ["CMD", "curl", "-I", "https://${GIT_SERVER_SITE_DOMAIN:?}"]
+      interval: 30s
       timeout: 5s
       retries: 3
       start_period: 30s
@@ -66,8 +66,12 @@ services:
             # we chown from the very topmost directory
             chown -R ${DOCKER_NONROOT_USER:?} ${FORGEJO_CUSTOM_DEST_DIR:?}
             # also remember to chown this volume!
-            chown -R ${DOCKER_NONROOT_USER:?} /data/
+            chown -R ${DOCKER_NONROOT_USER:?} ${GIT_SERVER_DATA_DEST_DIR:?}
           '
+    post_start:
+      # register the runner in the main forgejo container
+      - command: forgejo forgejo-cli actions register --keep-labels --secret ${FORGEJO_SHARED_SECRET:?}
+        user: ${DOCKER_NONROOT_USER:?}
     depends_on:
       nginx:
         condition: service_healthy
@@ -110,5 +114,79 @@ services:
       retries: 3
       start_period: 10s
 
+  forgejo_runner_dind:
+    container_name: forgejo_runner_dind
+    profiles:
+      - ${DOCKER_DEFAULT_PROFILE:?}
+    image: docker:dind
+    restart: unless-stopped
+    privileged: true
+    hostname: ${FORGEJO_RUNNER_DIND_HOSTNAME:?}
+    volumes:
+      - type: volume
+        source: forgejo_runner_certs
+        target: ${FORGEJO_RUNNER_CERTS_DEST_DIR:?}
+    environment:
+      DOCKER_HOST: forgejo_runner_dind
+      DOCKER_TLS_CERTDIR: ${FORGEJO_RUNNER_CERTS_DEST_DIR:?}
+    healthcheck:
+      test: ["CMD", "docker", "info"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  forgejo_runner:
+    container_name: forgejo_runner
+    profiles:
+      - ${DOCKER_DEFAULT_PROFILE:?}
+    image: data.forgejo.org/forgejo/runner:13
+    command: forgejo-runner --config ${FORGEJO_RUNNER_CONFIG_DEST_FILE:?} daemon
+    restart: unless-stopped
+    user: ${DOCKER_NONROOT_USER:?}
+    volumes:
+      # certs for encrypted communications with dind
+      - type: volume
+        source: forgejo_runner_certs
+        target: ${FORGEJO_RUNNER_CERTS_DEST_DIR:?}
+      # container-generated data
+      - type: volume
+        source: forgejo_runner_data
+        target: ${FORGEJO_RUNNER_DATA_DEST_DIR:?}
+      # host-provided data
+      - type: bind
+        source: ${FORGEJO_RUNNER_CONFIG_SRC_DIR:?}
+        target: ${FORGEJO_RUNNER_CONFIG_DEST_DIR:?}
+    env_file:
+      # for `envsubst`
+      - ./.env
+    environment:
+      DOCKER_HOST: tcp://${FORGEJO_RUNNER_DIND_HOSTNAME:?}:2376
+      DOCKER_TLS_VERIFY: 1
+      DOCKER_CERT_PATH: ${FORGEJO_RUNNER_CLIENT_CERTS_DEST_DIR:?}
+    pre_start:
+      # SYNC: paths inside container
+      - image: akubrinsky/envsubst
+        user: ${DOCKER_ROOT_USER:?}
+        # note that `sh -c` is required for `envsubst` (probably because it deals with env vars?)
+        command: >
+          sh -c '
+            [ -f ${FORGEJO_RUNNER_CONFIG_DEST_FILE:?}.template ] \
+              && envsubst < ${FORGEJO_RUNNER_CONFIG_DEST_FILE:?}.template \
+              > ${FORGEJO_RUNNER_CONFIG_DEST_FILE:?}
+            chown -R ${DOCKER_NONROOT_USER:?} ${FORGEJO_RUNNER_CONFIG_DEST_DIR:?}
+            # also remember to chown these volumes!
+            chown -R ${DOCKER_NONROOT_USER:?} ${FORGEJO_RUNNER_CERTS_DEST_DIR:?}
+            chown -R ${DOCKER_NONROOT_USER:?} ${FORGEJO_RUNNER_DATA_DEST_DIR:?}
+          '
+    depends_on:
+      forgejo_runner_dind:
+        # we don't really need to wait for this to be healthy
+        condition: service_started
+      git_server:
+        condition: service_healthy
+
 volumes:
   git_server_data:
+  forgejo_runner_certs:
+  forgejo_runner_data:

@@ -1,0 +1,64 @@
+log:
+  level: debug
+  # this is what is visible in the job's web ui
+  job_level: debug
+
+runner:
+  # where to store the registration result
+  file: .runner
+  # execute how many tasks concurrently at the same time
+  capacity: 1
+  envs:
+    DOCKER_HOST: tcp://forgejo_runner_dind:2376
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: /certs/client/
+  # note that forgejo also has a timeout (3h by default) for jobs, so set this to not more than that
+  timeout: 3h
+  shutdown_timeout: 3h
+  # whether skip verifying the tls certificate of the instance
+  insecure: false
+  # the timeout for fetching the job from forgejo
+  fetch_timeout: 30s
+  # the interval for fetching the job from the forgejo
+  fetch_interval: 2s
+  # the interval for reporting the job status and logs to forgejo
+  report_interval: 1s
+  labels:
+    ubuntu-latest:
+      backend: docker
+      backend-options:
+        # this is the node 26 bookworm for arm64
+        image: node@sha256:f1233c415b41ffcf237c717b3dea92e9d4ea006e0e4c71edcb790605d74f5404
+    debian:
+      backend: docker
+      backend-options:
+        # this is the node 26 bookworm for arm64
+        image: node@sha256:f1233c415b41ffcf237c717b3dea92e9d4ea006e0e4c71edcb790605d74f5404
+
+cache:
+  enabled: true
+  # use random available port
+  port: 0
+  proxy_port: 0
+
+container:
+  network: host
+  enable_ipv6: false
+  # privileged mode is required for docker-in-docker
+  #privileged: true
+  # i think this is a volume from inside the runner container to the job container inside it
+  # we keep the paths all the same so that i hopefully won't ever have to think about it
+  options: '-v /certs/client/:/certs/client/'
+  valid_volumes:
+    - 
+  docker_host: tcp://forgejo_runner_dind:2376
+  force_pull: false
+  force_rebuild: false
+
+server:
+  connections:
+    default:
+      # note that this cannot be a socket, for some stupid godforsaken reason
+      url: https://git.anonymousrand.xyz/
+      uuid: 64393133-6330-6365-3330-316136386563
+      token: d913c0ce301a68ece746ff9dc87fc773ab7718f4
