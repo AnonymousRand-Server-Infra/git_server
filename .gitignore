@@ -9,7 +9,7 @@ deployment/backup_scripts/backup*.sql
 data/*
 !data/forgejo/
 data/forgejo/*
-!data/forgejo/templates/
+!data/forgejo/templates/*.template
 !data/forgejo/public/
 !data/forgejo/conf/app.ini.template
 !data/forgejo_runner/config.yaml.template
