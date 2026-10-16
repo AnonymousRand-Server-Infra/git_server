@@ -1,0 +1,2 @@
+<!-- forgejo-specific custom css to apply *regardless of theme* -->
+<link rel="stylesheet" href="{{AppSubUrl}}/assets/css/base_style.css">

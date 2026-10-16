@@ -1,7 +1,7 @@
 declare-handler nam-shub-of-enki {
     checks {
         cookie-monster {
-            forgejo-hosts "${SITE_DOMAIN}"
+            forgejo-hosts "${GIT_SERVER_SITE_DOMAIN}"
         }
     }
 }

@@ -1,0 +1,139 @@
+.chroma .cp,  /* `CommentPreproc` */
+.chroma .cpf, /* `CommentPreprocFile` */
+.chroma .k,   /* `Keyword` */
+.chroma .kd,  /* `KeywordDeclaration` */
+.chroma .kn,  /* `KeywordNamespace` */
+.chroma .kp,  /* `KeywordPseudo` */
+.chroma .kr,  /* `KeywordReserved` */
+.chroma .kt,  /* `KeywordType` */
+.chroma .nb,  /* `NameBuiltin` */
+.chroma .bp,  /* `NameBuiltinPseudo` */
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-builtin,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-keyword,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-meta,
+.lines-num {
+    color: var(--text--custom-pink-shallow-xlight);
+}
+
+.chroma .na,  /* `NameAttribute` */
+.chroma .nc,  /* `NameClass` */
+.chroma .nd,  /* `NameDecorator` */
+.chroma .ne,  /* `NameException` */
+.chroma .ni,  /* `NameEntity` */
+.chroma .nl,  /* `NameLabel` */
+.chroma .nn,  /* `NameNamespace` */
+.chroma .no,  /* `NameConst` */
+.chroma .nt,  /* `NameTag` */
+.chroma .nx,  /* `NameOther` */
+.chroma .py,  /* `NameProperty` */
+.chroma .nf,  /* `NameFunction` */
+.chroma .fm,  /* `NameFunctionMagic` */
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-attribute,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-property,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-qualifier,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-variable-2,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-variable-3,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-tag {
+    color: var(--text--custom-orange-xdeep);
+}
+
+.chroma .c,   /* `Comment` */
+.chroma .c1,  /* `CommentSingle` */
+.chroma .ch,  /* `CommentHashbang` */
+.chroma .cm,  /* `CommentMultiline` */
+.chroma .cs,  /* `CommentSpecial` */
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-comment {
+    color: var(--text--custom-green-deep-xdark);
+}
+
+.chroma .kc,  /* `KeywordConstant` */
+.chroma .l,   /* `Literal` */
+.chroma .ld,  /* `LiteralDate` */
+.chroma .m,   /* `LiteralNumber` */
+.chroma .mb,  /* `LiteralNumberBin` */
+.chroma .mf,  /* `LiteralNumberFloat` */
+.chroma .mh,  /* `LiteralNumberHex` */
+.chroma .mi,  /* `LiteralNumberInteger` */
+.chroma .il,  /* `LiteralNumberIntegerLong` */
+.chroma .mo,  /* `LiteralNumberOct` */
+.chroma .s,   /* `LiteralString` */
+.chroma .dl,  /* `LiteralStringDelimiter` */
+.chroma .s1,  /* `LiteralStringSingle` */
+.chroma .s2,  /* `LiteralStringDouble` */
+.chroma .sa,  /* `LiteralStringAffix` */
+.chroma .sb,  /* `LiteralStringBacktick` */
+.chroma .sc,  /* `LiteralStringChar` */
+.chroma .sd,  /* `LiteralStringDoc` */
+.chroma .se,  /* `LiteralStringEscape` */
+.chroma .sh,  /* `LiteralStringHeredoc` */
+.chroma .si,  /* `LiteralStringInterpol` */
+.chroma .sr,  /* `LiteralStringRegex` */
+.chroma .ss,  /* `LiteralStringSymbol` */
+.chroma .sx,  /* `LiteralStringOther` */
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-atom,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-number,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-quote,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-string,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-string-2 {
+    color: var(--text--custom-blue-xdeep);
+}
+
+.chroma .n,   /* `Name` */
+.chroma .nv,  /* `NameVariable` */
+.chroma .vc,  /* `NameVariableClass` */
+.chroma .vg,  /* `NameVariableGlobal` */
+.chroma .vi,  /* `NameVariableInstance` */
+.chroma .vm,  /* `NameVariableMagic` */
+.chroma .g,   /* `Generic` */
+.chroma .gl,  /* `GenericUnderline` */
+.chroma .go,  /* `GenericOutput` */
+.chroma .gt,  /* `GenericTraceback` */
+.chroma .o,   /* `Operator` */
+.chroma .ow,  /* `OperatorWord` */
+.chroma .p,   /* `Punctuation` */
+.chroma .w,   /* `TextWhitespace` */
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-bracket,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-def {
+    color: var(--color-text);
+}
+
+.chroma .gd { /* `GenericDeleted` */
+    color: var(--color-text);
+    background-color: var(--color-diff-removed-word-bg);
+}
+
+.chroma .ge { /* `GenericEmph` */
+    font-style: italic;$maroon
+}
+
+.chroma .gh, /* `GenericHeading` */
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-header {
+    color: var(--text--custom-pink-shallow-xlight);
+}
+
+.chroma .gi { /* `GenericInserted` */
+    color: var(--color-text);
+    background-color: var(--color-diff-added-word-bg);
+}
+
+.chroma .gp { /* `GenericPrompt` */
+    color: var(--text--custom-pink-shallow-light);
+}
+
+.chroma .gr, /* `GenericError` */
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-error {
+    color: var(--color-error-text);
+}
+
+.chroma .gs { /* `GenericStrong` */
+    font-weight: bold;
+}
+
+.chroma .gu { /* `GenericSubheading` */
+    color: var(--text--custom-blue-xdeep);
+}
+
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-link,
+:is(.CodeMirror, .CodeMirror.cm-s-default, .CodeMirror.cm-s-paper) .cm-url {
+    color: var(--default-link-color);
+}

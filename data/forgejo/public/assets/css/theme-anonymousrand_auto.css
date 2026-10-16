@@ -1,0 +1,2 @@
+@import "theme-anonymousrand_light.css";
+@import "theme-anonymousrand_dark.css" (prefers-color-scheme: dark);

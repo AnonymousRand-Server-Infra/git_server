@@ -6,7 +6,11 @@ mysql/mysql_data_dir/
 deployment/backup_scripts/backup*.sql
 
 # other variable things
-data/**
+data/*
+!data/forgejo/
+data/forgejo/*
+!data/forgejo/templates/
+!data/forgejo/public/
 !data/forgejo/conf/app.ini.template
 !data/forgejo_runner/config.yaml.template
 

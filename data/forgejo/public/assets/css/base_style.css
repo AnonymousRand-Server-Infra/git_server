@@ -1,0 +1,6 @@
+@import "personal_website_fonts.css";
+
+:root {
+  --fonts-proportional: "Quicksand :3", sans-serif !important;
+  --fonts-monospace: "Maple Mono NL", monospace !important;
+}

@@ -3,6 +3,7 @@ include:
   - ${PATH_TO_SERVER_ROOT:?}/${PATH_FROM_ROOT_TO_NGINX:?}/compose.yaml
   - ${PATH_TO_SERVER_ROOT:?}/${PATH_FROM_ROOT_TO_IOCAINE:?}/compose.yaml
   - ./deployment/anubis/compose.yaml
+  - ${PATH_TO_SERVER_ROOT:?}/${PATH_FROM_ROOT_TO_PERSONAL_WEBSITE:?}/compose.yaml
 
 services:
   git_server:
@@ -14,6 +15,7 @@ services:
       - ${DOCKER_DEFAULT_PROFILE:?}
     image: codeberg.org/forgejo/forgejo:15
     restart: unless-stopped
+    stop_grace_period: 999999h
     # NOTE: we can't seem to set `user:` since forgejo must use its own internal user initially
     # to initialize some stuff in `/etc/` etc.
     # SYNC: make sure firewalls (e.g. `ufw`) don't block these ports!
@@ -54,7 +56,7 @@ services:
     pre_start:
       # use `envsubst` instead of passing some config options here as environment variables
       # since also passing a config file seems to override the environment variables
-      # SYNC: paths inside container
+      # SYNC: urls and paths inside container
       - image: akubrinsky/envsubst
         user: ${DOCKER_ROOT_USER:?}
         # note that `sh -c` is required for `envsubst` (probably because it deals with env vars?)
@@ -63,10 +65,29 @@ services:
             [ -f ${GIT_SERVER_CONFIG_DEST_FILE:?}.template ] \
               && envsubst < ${GIT_SERVER_CONFIG_DEST_FILE:?}.template \
               > ${GIT_SERVER_CONFIG_DEST_FILE:?}
+            [ -f ${FORGEJO_HEADER_TMPL_DEST_FILE:?}.template ] \
+              && envsubst < ${FORGEJO_HEADER_TMPL_DEST_FILE:?}.template \
+              > ${FORGEJO_HEADER_TMPL_DEST_FILE:?}
+
             # we chown from the very topmost directory
             chown -R ${DOCKER_NONROOT_USER:?} ${FORGEJO_CUSTOM_DEST_DIR:?}
             # also remember to chown this volume!
             chown -R ${DOCKER_NONROOT_USER:?} ${GIT_SERVER_DATA_DEST_DIR:?}
+          '
+      - image: busybox:musl
+        user: ${DOCKER_NONROOT_USER:?}
+        # SYNC: urls and paths inside container for personal website theme files!
+        command: >
+          sh -c '
+            mkdir -p ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/
+            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/general_vars.css \
+              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_vars.css
+            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/light_theme.css \
+              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_light.css
+            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/dark_theme.css \
+              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_dark.css
+            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/fonts.css \
+              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_fonts.css
           '
     post_start:
       # register the runner in the main forgejo container
@@ -80,6 +101,9 @@ services:
       git_server_anubis:
         condition: service_healthy
       git_server_mysql:
+        condition: service_healthy
+      # since we need to fetch assets from here
+      personal_website:
         condition: service_healthy
 
   git_server_mysql:
