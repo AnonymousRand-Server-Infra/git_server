@@ -7,7 +7,8 @@
 #     - `$1`: destination path for backup, formatted identically to the destination path of `scp`.
 #     - `$2`: backup number to be appended to the backup name.
 
-set -ex
+set -euo pipefail
+set -x
 
 # SYNC: path to git server's base directory `.env`! (for db name, etc.)
 source ../../.env
