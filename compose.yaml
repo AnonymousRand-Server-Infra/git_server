@@ -74,21 +74,6 @@ services:
             # also remember to chown this volume!
             chown -R ${DOCKER_NONROOT_USER:?} ${GIT_SERVER_DATA_DEST_DIR:?}
           '
-      - image: busybox:musl
-        user: ${DOCKER_NONROOT_USER:?}
-        # SYNC: urls and paths inside container for personal website theme files!
-        command: >
-          sh -c '
-            mkdir -p ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/
-            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/general_vars.css \
-              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_vars.css
-            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/light_theme.css \
-              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_light.css
-            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/dark_theme.css \
-              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_dark.css
-            wget https://${PERSONAL_WEBSITE_SITE_DOMAIN:?}/static/css/fonts.css \
-              -O ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/css/personal_website_fonts.css
-          '
     post_start:
       # register the runner in the main forgejo container
       - command: forgejo forgejo-cli actions register --keep-labels --secret ${FORGEJO_SHARED_SECRET:?}

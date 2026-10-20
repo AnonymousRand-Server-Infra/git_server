@@ -1,0 +1,3 @@
+[submodule "data/forgejo/public/assets/theme"]
+	path = data/forgejo/public/assets/theme
+	url = ssh://git@git.anonymousrand.xyz:2222/AnonymousRand-Theme/git_server.git

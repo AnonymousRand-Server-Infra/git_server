@@ -1,8 +1,7 @@
-/* theme-dependent styles/variables go here */
-
-@import "personal_website_light.css";
-@import "anonymousrand_style.css";
-@import "anonymousrand_syntax_hl.css";
+@import "../theme/css/light_theme.css";
+@import "./anonymousrand_vars.css";
+@import "./anonymousrand_styles.css";
+@import "./anonymousrand_syntax_hl.css";
 
 :root {
     color-scheme: light;

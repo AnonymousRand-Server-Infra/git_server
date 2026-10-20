@@ -1,0 +1,297 @@
+/* styles specific to my own themes go here */
+
+@import "../theme/css/colors.css";
+
+::selection {
+    background: var(--color-selection) !important;
+    color: var(--accent-fg) !important;
+}
+
+/* i love specificity. */
+a,
+a.text.text,
+a span.text.text,
+.flex-item a:not(.label, .button) {
+    text-decoration-color: currentcolor;
+    color: var(--link-color) !important;
+}
+
+a:hover,
+a.text.text:hover,
+a:hover span.text.text,
+.flex-item a:not(.label, .button):hover {
+    text-decoration-color: currentcolor;
+    color: var(--link-hover-color) !important;
+}
+
+blockquote {
+    margin-left: 0rem;
+    border-left: 4px solid var(--border--lightgray);
+    padding-left: 1rem;
+    color: var(--text--dimgray);
+}
+
+/* admonitions are using `*-text` variables for border/text color, but can't change values
+ * of the `*-text` variables without breaking readability on accented backgrounds */
+blockquote.attention-tip {
+    border-left-color: var(--color-success-bg);
+}
+
+blockquote.attention-warning {
+    border-left-color: var(--color-warning-bg);
+}
+
+/* need `:root` to set `rem` size but also `body` to override forgejo */
+:root, body {
+    text-decoration-thickness: 1px;
+    overflow-wrap: anywhere;
+    font-size: 16px;
+}
+
+/******************************************************************************/
+/* buttons */
+
+.button.primary {
+    border-width: 1px;
+}
+
+/* make sure to not target primary buttons here though (`ui.primary.button`) */
+.ui.basic.button,
+.ui.basic.buttons .button {
+    border-color: var(--accent-border) !important;
+    background-color: transparent !important;
+    color: var(--accent-fg) !important;
+}
+
+.ui.action.input .ui.ui.button {
+    border-color: var(--accent-border) !important;
+}
+
+.ui.basic.button:hover,
+.ui.basic.buttons .button:hover {
+    border-color: var(--accent-hover-border) !important;
+    background-color: var(--color-small-accent) !important;
+    color: var(--accent-fg) !important;
+}
+
+.ui.action.input .ui.ui.button:hover {
+    border-color: var(--accent-hover-border) !important;
+}
+
+.ui.basic.button:is(:active, :focus),
+.ui.basic.buttons .button:is(:active, :focus),
+.ui.primary.button:is(:focus),
+.ui.primary.buttons .button:is(:focus) {
+    background-color: var(--accent-bg) !important;
+    color: var(--accent-fg) !important;
+}
+
+.ui.primary.button:is(:hover),
+.ui.primary.buttons .button:is(:hover) {
+    background-color: var(--accent-hover-bg) !important;
+    color: var(--accent-fg) !important;
+}
+
+.ui.primary.button:is(:active),
+.ui.primary.buttons .button:is(:active) {
+    background-color: var(--accent-active-bg) !important;
+    color: var(--accent-fg) !important;
+}
+
+.ui.basic.label {
+    background-color: var(--accent-bg) !important;
+}
+
+.ui.basic.label:hover {
+    background-color: var(--accent-hover-bg) !important;
+}
+
+.ui.basic.label:active {
+    background-color: var(--accent-active-bg) !important;
+}
+
+#navbar .item:hover,
+#navbar .item:hover {
+    background-color: var(--color-small-strong-accent) !important;
+}
+
+#navbar .item.active,
+#navbar .item:active {
+    background-color: var(--color-strong-accent) !important;
+    color: var(--strong-accent-fg) !important;
+}
+
+/******************************************************************************/
+/* code */
+
+/* god i hate specificity; have to separate this from `code`'s stuff */
+pre {
+    margin-bottom: 0;
+    font-size: 100%;
+}
+
+pre, code {
+    font-size: 100%;
+}
+
+pre:not(.code-block, .code-view),
+code:not(.chroma, .code-inner) {
+    color: var(--text--custom-pink-shallow);
+}
+
+/* these are "inline code blocks": a code block that respects whitespace unlike inline code,
+ * but still does things like word wrapping */
+pre:not(table pre) code {
+    margin-bottom: 1rem;
+    border: 2px solid var(--border--lightgray);
+    padding: 0.75rem 1rem;
+}
+
+/* fallback color */
+.code-block, .code-view {
+    color: var(--color-text);
+}
+
+.markup .code-block {
+    border: 2px solid var(--border--lightgray);
+}
+
+.inline-code-block {
+    background-color: var(--color-markup-code-inline);
+}
+
+.lines-code,
+.code-inner {
+    font-size: 14px;
+}
+
+.lines-num span::after {
+    /* needed to avoid weird wrapping (and `fit-content` doesn't work) */
+    width: max-content;
+    font-size: 14px;
+}
+
+.markup code,
+.markup tt {
+    padding: 0;
+    font-size: 100%;
+}
+
+.markup pre,
+.markup .highlight pre {
+    font-size: 100%;
+}
+
+/******************************************************************************/
+/* other */
+
+:is(.non-diff-file-content) h1 {
+    margin-bottom: 1rem;
+    border-bottom: 3px solid currentcolor;
+    padding-bottom: 0.5rem;
+    color: var(--text--custom-pink-shallow-xxlight);
+    font-size: calc(1.3rem + 2.4vw); /* fs-3 */
+}
+
+@media (min-width: 800px) {
+    :is(.non-diff-file-content) h1 {
+        font-size: 2.5rem;
+    }
+}
+
+:is(.non-diff-file-content) h2 {
+    margin-bottom: 1rem !important;
+    border-bottom: 2px solid currentcolor;
+    padding-bottom: 0.25rem;
+    color: var(--text--custom-blue-deep-dark);
+    font-size: calc(1.2rem + 1.6vw); /* fs-5 */
+}
+
+@media (min-width: 800px) {
+    :is(.non-diff-file-content) h2 {
+        font-size: 2rem;
+    }
+}
+
+:is(.non-diff-file-content) img {
+    margin: 1rem auto 1rem auto;
+    border: 1px solid transparent;
+}
+
+:is(.non-diff-file-content) img:hover {
+    border-color: var(--border--gray) !important;
+}
+
+li > :last-child,
+li > :last-child > :last-child,
+li > :last-child > :last-child > :last-child,
+li > :last-child > :last-child > :last-child > :last-child {
+    margin-bottom: 0;
+}
+
+svg.attention-tip,
+strong.attention-tip {
+    color: var(--color-success-bg);
+}
+
+svg.attention-warning,
+strong.attention-warning {
+    color: var(--color-warning-bg);
+}
+
+.author,
+.author-wrapper {
+    color: var(--accent-fg);
+}
+
+.background-img {
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.repository.file.list #repo-files-table tbody .svg.octicon-file-directory-fill,
+.repository.file.list #repo-files-table tbody .svg.octicon-file-submodule {
+    color: var(--bg--custom-pink-shallow-xxxlight);
+}
+
+.text.primary {
+    color: var(--text--custom-pink-shallow-xlight) !important;
+}
+
+.tippy-box[data-theme="tooltip"] {
+    border: 2px solid var(--border--custom-pink-xlight);
+}
+
+.tippy-box[data-theme="tooltip"] .tippy-svg-arrow-inner,
+.tippy-box[data-theme="tooltip"] .tippy-svg-arrow-outer {
+    stroke: var(--border--custom-pink-xlight);
+}
+
+.ui.basic.modal {
+    background-color: var(--default-bg);
+}
+
+/* modal text color for the "Remove GPG Key" modal */
+.ui.basic.modal,
+.ui.basic.modal > .header,
+.ui.inverted.button {
+    color: var(--color-text) !important;
+}
+
+/* error message headers weirdly don't seem to be using `--color-error-text` */
+.ui.negative.message .header {
+    color: var(--color-error-text);
+}
+
+#repo-topics,
+/* repository topics when in edit mode */
+#topic_edit > .ui.selection.dropdown {
+    color: var(--color-label-text) !important;
+}
+
+/* repository topics edit button */
+#manage_topic {
+    color: var(--color-text-light-2) !important;
+}
