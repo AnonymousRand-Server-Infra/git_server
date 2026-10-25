@@ -6,15 +6,15 @@
     /****************************************************************************/
     /* special colors :3 */
 
-    --color-accent: var(--accent-bg);
-    --color-strong-accent: var(--strong-accent-bg);
-    accent-color: var(--color-accent);
+    --color-accent:        var(---color-accent-default-bg);
+    --color-strong-accent: var(---color-strong-accent-default-bg);
+    accent-color:          var(--color-accent);
 
-    --color-primary: var(--accent-bg);
-    --color-primary-contrast: var(--accent-fg);
-    --color-primary-hover: var(--accent-hover-bg);
+    --color-primary:          var(---color-accent-default-bg);
+    --color-primary-contrast: var(---color-accent-default-fg);
+    --color-primary-hover:    hsl(from var(---color-accent-default-bg) h s calc(l - 2.5));
 
-    --color-selection: var(--bg--custom-pink-shallow-xxxxlight);
+    --color-selection: var(---color-selection-bg);
 
     --color-primary-alpha-10: rgb(from var(--color-primary) r g b / 0.1);
     --color-primary-alpha-20: rgb(from var(--color-primary) r g b / 0.2);
@@ -39,22 +39,22 @@
     /****************************************************************************/
     /* specific colors */
 
-    --color-body:         var(--default-bg);
-    --color-secondary-bg: var(--variant-bg);
+    --color-body:         var(---color-variant-2-bg);
+    --color-secondary-bg: var(---color-variant-1-bg);
 
-    --color-text:         var(--default-fg);
-    --color-text-light:   var(--text--dimgray);
-    --color-text-light-1: var(--text--dimgray);
-    --color-text-light-2: var(--text--gray);
-    --color-text-light-3: var(--text--gray);
-    --color-text-dark:    var(--default-fg);
-    --color-text-focus:   var(--default-fg);
+    --color-text:         var(---color-variant-2-fg);
+    --color-text-light:   var(---color-gray-dark-fg);
+    --color-text-light-1: var(---color-gray-dark-fg);
+    --color-text-light-2: var(---color-gray-fg);
+    --color-text-light-3: var(---color-gray-light-fg);
+    --color-text-dark:    var(---color-gray-xdark-fg);
+    --color-text-focus:   var(---color-gray-xdark-fg);
 
-    --color-shadow: rgb(from var(--text--black) r g b / 0.1);
+    --color-shadow: var(---color-pink-xxxxlight-border);
 
-    --color-box-header:         var(--default-bg);
-    --color-box-body:           var(--default-bg);
-    --color-box-body-highlight: var(--variant-bg);
+    --color-box-header:         var(---color-variant-2-bg);
+    --color-box-body:           var(---color-variant-2-bg);
+    --color-box-body-highlight: var(---color-variant-1-bg);
 
     --color-error-border:    var(--color-red);
     --color-error-bg:        #ffcccc;
@@ -90,60 +90,60 @@
     --color-orange-badge-bg:       var(--color-orange);
     --color-orange-badge-hover-bg: oklch(from var(--color-orange-badge) calc(l + 0.05) c h));
 
-    --color-git: var(--color-orange);
+    --color-git:          var(--color-orange);
     --color-highlight-bg: var(--color-selection);
 
-    --color-footer:       var(--variant-bg);
-    --color-timeline:     var(--variant-bg);
+    --color-footer:   var(---color-variant-1-bg);
+    --color-timeline: var(---color-variant-2-bg);
 
-    --color-input-text:              var(--default-fg);
-    --color-input-background:        var(--default-bg);
-    --color-input-toggle-background: var(--default-bg);
-    --color-input-border:            var(--border--custom-pink-xxlight);
-    --color-input-border-hover:      var(--border--custom-pink-xlight);
+    --color-input-text:              var(---color-variant-1-fg);
+    --color-input-background:        var(---color-variant-1-bg);
+    --color-input-toggle-background: var(---color-variant-1-bg);
+    --color-input-border:            var(---color-border-default);
+    --color-input-border-hover:      var(---color-border-default);
 
-    --color-nav-bg:             var(--variant-bg);
-    --color-nav-hover-bg:       var(--color-hover);
+    --color-nav-bg:             var(---color-variant-1-bg);
+    --color-nav-hover-bg:       hsl(from var(---color-hover) h s calc(l - 2.5));
     --color-navbar:             var(--color-nav-bg);
     --color-navbar-transparent: transparent;
 
-    --color-light:               rgb(from var(--variant-bg) r g b / 0.5);
-    --color-light-mimic-enabled: rgb(0 0 0 calc(40 / 255 * 222 / 255 / var(--opacity-disabled)));
-    --color-light-border:        var(--border--custom-pink-xxlight);
+    --color-light:               rgb(from var(---color-variant-2-bg) r g b / 0.5);
+    --color-light-mimic-enabled: rgb(0 0 0 calc(40 / 255 * 222 / 255 / 0.5));
+    --color-light-border:        var(---color-border-default);
 
     --color-hover:  var(--color-small-accent);
     --color-active: var(--color-accent);
     --color-strong-hover: var(--color-small-strong-accent);
     --color-strong-active: var(--color-strong-accent);
 
-    --color-menu: var(--default-bg);
-    --color-card: var(--variant-bg);
+    --color-menu: var(---color-variant-2-bg);
+    --color-card: var(---color-variant-2-bg);
 
     --color-markup-table-row:   transparent;
     --color-markup-code-block:  transparent;
     --color-markup-code-inline: transparent;
 
-    --color-button:        var(--default-bg);
-    --color-expand-button: var(--default-bg);
+    --color-button:        transparent;
+    --color-expand-button: transparent;
 
     --color-code-bg:               transparent;
-    --color-code-sidebar-bg:       var(--default-bg);
+    --color-code-sidebar-bg:       var(---color-variant-1-bg);
     --color-editor-line-highlight: var(--color-selection);
 
-    --color-tooltip-bg:   var(--default-bg);
-    --color-tooltip-text: var(--default-fg);
+    --color-tooltip-bg:   var(---color-variant-2-bg);
+    --color-tooltip-text: var(---color-variant-2-fg);
 
-    --color-reaction-bg:        var(--bg--custom-pink-shallow-xxxxlight);
-    --color-reaction-active-bg: var(--bg--custom-pink-shallow-xxxlight);
+    --color-reaction-bg:        var(---color-custom-pink-xxxxxxlight-bg);
+    --color-reaction-active-bg: var(---color-custom-pink-xxxxxlight-bg);
 
-    --color-header-wrapper:             var(--variant-bg);
+    --color-header-wrapper:             var(---color-variant-2-bg);
     --color-header-wrapper-transparent: transparent;
 
-    --color-label-text:      var(--variant-fg);
-    --color-label-bg:        var(--variant-bg);
+    --color-label-text:      var(---color-variant-2-fg);
+    --color-label-bg:        var(---color-variant-2-bg);
     /* lazy but i don't think this actually does anything */
-    --color-label-hover-bg:  var(--accent-bg);
-    --color-label-active-bg: var(--accent-hover-bg);
+    --color-label-hover-bg:  var(--color-primary);
+    --color-label-active-bg: var(--color-primary-hover);
 
     --color-diff-removed-word-bg:    rgb(from var(--color-red) r g b / 0.4);
     --color-diff-added-word-bg:      rgb(from var(--color-green) r g b / 0.5);
@@ -155,8 +155,8 @@
     --color-diff-added-row-border:   rgb(from var(--color-green) r g b / 0.12);
     --color-diff-inactive:           dimgray;
 
-    --color-placeholder-text: var(--lighter-fg);
-    --color-project-board-bg: var(--variant-bg);
-    --color-caret:            var(--text--custom-pink-light);
-    --color-active-line:      var(--variant-bg);
+    --color-placeholder-text: var(---color-lighter-fg);
+    --color-project-board-bg: var(---color-variant-2-bg);
+    --color-caret:            var(---color-cursor-strong-bg);
+    --color-active-line:      var(---color-variant-2-bg);
 }

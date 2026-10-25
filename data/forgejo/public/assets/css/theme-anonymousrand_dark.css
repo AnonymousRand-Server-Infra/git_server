@@ -9,8 +9,8 @@
     /****************************************************************************/
     /* special colors :3 */
 
-    --color-small-accent: hsl(from var(--color-accent) h s calc(l - 3));
-    --color-small-strong-accent: hsl(from var(--color-strong-accent) h s calc(l - 3));
+    --color-small-accent: hsl(from var(--color-accent) h s calc(l - 2.5));
+    --color-small-strong-accent: hsl(from var(--color-strong-accent) h s calc(l - 2.5));
 
     --color-secondary: var(---custom-pink-xxlight);
 

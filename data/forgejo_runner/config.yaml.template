@@ -24,16 +24,14 @@ runner:
   # the interval for reporting the job status and logs to forgejo
   report_interval: 1s
   labels:
-    ubuntu-latest:
-      backend: docker
-      backend-options:
-        # this is the node 26 bookworm for arm64
-        image: node@sha256:f1233c415b41ffcf237c717b3dea92e9d4ea006e0e4c71edcb790605d74f5404
     debian:
       backend: docker
       backend-options:
-        # this is the node 26 bookworm for arm64
-        image: node@sha256:f1233c415b41ffcf237c717b3dea92e9d4ea006e0e4c71edcb790605d74f5404
+        image: debian:bookworm
+    ubuntu-latest:
+      backend: docker
+      backend-options:
+        image: ghcr.io/catthehacker/ubuntu:act-latest
 
 cache:
   enabled: true

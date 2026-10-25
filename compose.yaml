@@ -34,6 +34,9 @@ services:
         target: ${FORGEJO_CUSTOM_DEST_DIR:?}
         # not `read_only` since `envsubst` needs to write to this, and we can't bind only the input
         # `envsubst` file as `pre_start` runs in a separate container, so the output file is lost
+      # hide `.git/` in the theming subrepo from the bind by mounting an anonymous volume over it
+      - type: volume
+        target: ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/theme/.git/
       # the docs have this so
       - type: bind
         source: /etc/localtime
