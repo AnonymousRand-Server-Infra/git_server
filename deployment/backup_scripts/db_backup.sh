@@ -16,9 +16,9 @@ source ./.db_backup.env
 
 host_backup_path="./backup_$2.sql"
 
-mysqldump -S "$GIT_SERVER_MYSQL_SCKT" \
+mysqldump -S "$GIT_SERVER_MYSQL_SCKT_HOST" \
     -u "$GIT_SERVER_MYSQL_USERNAME" \
-    -password="$GIT_SERVER_MYSQL_PASSWORD" \
+    --password="$GIT_SERVER_MYSQL_PASSWORD" \
     "$GIT_SERVER_MYSQL_DB_NAME" > "$host_backup_path"
 rsync -e "ssh -i $SSH_PRIVATE_KEY_LOCATION" --backup --suffix=`date +'.%F_%H-%M-%S'` \
     "$host_backup_path" "$1"
