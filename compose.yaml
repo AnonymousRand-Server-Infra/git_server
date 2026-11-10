@@ -195,6 +195,9 @@ services:
 
 volumes:
   git_server_data:
+    # this `name` is very important to make sure this doesn't get prefixed with project name,
+    # which means starting the git server container from this project vs the root server project
+    # will use different volumes and hence cause a whole bunch of repo sybc/data chaos
     name: git_server_data
   forgejo_runner_certs:
     name: forgejo_runner_certs
