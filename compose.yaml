@@ -15,7 +15,6 @@ services:
       - ${DOCKER_DEFAULT_PROFILE:?}
     image: codeberg.org/forgejo/forgejo:15
     restart: unless-stopped
-    stop_grace_period: 999999h
     # NOTE: we can't seem to set `user:` since forgejo must use its own internal user initially
     # to initialize some stuff in `/etc/` etc.
     # SYNC: make sure firewalls (e.g. `ufw`) don't block these ports!
@@ -29,14 +28,13 @@ services:
         source: git_server_data
         target: ${GIT_SERVER_DATA_DEST_DIR:?}
       # host-provided data; we must provide all of `custom/` to be able to chown all of it later
+      # IMPORTANT: this exposes the `.git` of the theming subrepo, but currently this is
+      # a single file since the theming is a subrepo, so it shouldn't be bad to expose it publicly
       - type: bind
         source: ${FORGEJO_CUSTOM_SRC_DIR:?}
         target: ${FORGEJO_CUSTOM_DEST_DIR:?}
         # not `read_only` since `envsubst` needs to write to this, and we can't bind only the input
         # `envsubst` file as `pre_start` runs in a separate container, so the output file is lost
-      # hide `.git/` in the theming subrepo from the bind by mounting an anonymous volume over it
-      - type: volume
-        target: ${FORGEJO_CUSTOM_DEST_DIR:?}/public/assets/theme/.git/
       # the docs have this so
       - type: bind
         source: /etc/localtime
@@ -89,9 +87,6 @@ services:
       git_server_anubis:
         condition: service_healthy
       git_server_mysql:
-        condition: service_healthy
-      # since we need to fetch assets from here
-      personal_website:
         condition: service_healthy
 
   git_server_mysql:
@@ -200,5 +195,8 @@ services:
 
 volumes:
   git_server_data:
+    name: git_server_data
   forgejo_runner_certs:
+    name: forgejo_runner_certs
   forgejo_runner_data:
+    name: forgejo_runner_data

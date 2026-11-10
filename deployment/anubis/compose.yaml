@@ -16,7 +16,7 @@ services:
       # SYNC: paths in which the container produces data (e.g. in config)
       - type: volume
         source: git_server_anubis_var
-        target: /var/anubis/
+        target: ${GIT_SERVER_ANUBIS_VAR_DEST_DIR:?}
     env_file:
       # for `envsubst`
       - ./.env
@@ -27,3 +27,4 @@ services:
 
 volumes:
   git_server_anubis_var:
+    name: git_server_anubis_var
